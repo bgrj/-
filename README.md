@@ -24,7 +24,7 @@
 pip install zstandard pycryptodome pysilk faster-whisper
 ```
 
-语音还需要 ffmpeg。转写使用 faster-whisper 的 `small` 模型，语言为中文，结果会缓存在音频旁边的 `.txt` 里。
+语音转写使用 faster-whisper 的 `small` 模型，语言为中文，结果会缓存在音频旁边的 `.txt` 里。仓库自带 `tools/ffmpeg.exe`，也可以用环境变量 `FFMPEG` 换成别的 ffmpeg。
 
 ## 生成示例
 
@@ -70,7 +70,16 @@ export_chat(messages, Path("输出目录"), title="聊天记录")
 
 ## 从微信 4 本地库导出
 
-这一步读取的是**已经解密**的本地数据库，程序本身不负责取出数据库密钥。解密后的库放在一个目录里，其中要有 `message/message_*.db`；语音在 `message/media_0.db` 的 `VoiceInfo` 表。
+微信 4 的数据库是加密的。先用仓库里的 `wxbak` 在本机解密：它只读取已经登录的微信，不连接微信服务器。需要 Windows、Python 3.9 以上，并用管理员权限运行，微信保持登录。
+
+```bash
+pip install -r wxbak/requirements.txt
+python wxbak/scripts/wxbak.py selftest
+python wxbak/scripts/wxbak.py doctor
+python wxbak/scripts/wxbak.py all --who "对方昵称" --self-name 我 --out 导出目录
+```
+
+更细的步骤在 [wxbak/README.md](wxbak/README.md)。解密结果里要有 `message/message_*.db`，语音在 `message/media_0.db` 的 `VoiceInfo` 表。把这个目录交给下面的导出程序，生成 HTML 和 PDF。
 
 先设置环境变量，再调用 `load_conversation`：
 
@@ -80,8 +89,8 @@ export_chat(messages, Path("输出目录"), title="聊天记录")
 | `WECHAT_DB_ROOT` | 已解密数据库的根目录 |
 | `WECHAT_ACCOUNT_DIR` | 微信账号目录，用来找图片、文件和视频 |
 | `WECHAT_IMAGE_KEY` | 图片 AES 密钥文件。没有密钥时图片导出为卡片 |
-| `FFMPEG` | ffmpeg 可执行文件 |
-| `WECHATMSG_EXPORTER` | 未设置 `FFMPEG` 时，从这里的 `exporter/resources/ffmpeg.exe` 查找 |
+| `FFMPEG` | ffmpeg 可执行文件。不设置时使用仓库里的 `tools/ffmpeg.exe` |
+| `WECHATMSG_EXPORTER` | 可选。仓库里没有 ffmpeg 时，从这里的 `exporter/resources/ffmpeg.exe` 查找 |
 
 ```python
 import os
@@ -105,7 +114,9 @@ export_chat(messages, Path("输出目录"), title="聊天记录", media_root=med
 ## 目录
 
 ```text
-chat_export/     导出和排版
+chat_export/     把已解密的记录排成 HTML 和 PDF
+wxbak/           解密本机微信 4 数据库
+tools/ffmpeg.exe 语音转码
 output/demo/     示例 HTML 与 PDF
 ```
 

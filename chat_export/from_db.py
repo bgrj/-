@@ -20,8 +20,12 @@ SELF_WXID = os.environ.get("WECHAT_WXID", "")
 ACCOUNT_DIR = Path(os.environ.get("WECHAT_ACCOUNT_DIR", ""))
 DB_ROOT = Path(os.environ.get("WECHAT_DB_ROOT", ""))
 FFMPEG = Path(os.environ.get("FFMPEG", ""))
-if not str(FFMPEG) and EXPORTER:
-    FFMPEG = EXPORTER / "exporter" / "resources" / "ffmpeg.exe"
+if not str(FFMPEG):
+    bundled = Path(__file__).resolve().parents[1] / "tools" / "ffmpeg.exe"
+    if bundled.is_file():
+        FFMPEG = bundled
+    elif EXPORTER:
+        FFMPEG = EXPORTER / "exporter" / "resources" / "ffmpeg.exe"
 IMAGE_KEY_FILE = Path(os.environ.get("WECHAT_IMAGE_KEY", ""))
 
 LOCAL_KIND = {
