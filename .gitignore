@@ -45,3 +45,5 @@ coverage/
 # Other
 *.bak
 *.swp
+__pycache__/
+*.py[cod]
