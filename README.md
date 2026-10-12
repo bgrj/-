@@ -1,82 +1,114 @@
-<h1 align="center">我的数据我做主</h1>
-<div align="center">
-    <a href="https://github.com/LC044/WeChatMsg/stargazers">
-        <img src="https://img.shields.io/github/stars/LC044/WeChatMsg.svg" />
-    </a>
-    <a href="#" target="_blank">
-        <img alt="GitHub forks" src="https://img.shields.io/github/forks/LC044/WeChatMsg?color=eb6ea5">
-    </a>
-    <a href="#" target="_blank">
-        <img src="https://img.shields.io/badge/WeChat-留痕-blue.svg">
-    </a>
-    <a target="_blank" href="#">
-        <img alt="Hits" src="https://hits.b3log.org/LC044/memotrace.svg">
-    </a>
-</div>
+# 微信聊天记录一键导出
 
-<div align="center">
-    <a href="https://memotrace.cn/"><img src="/doc/image3.png" height="240"/></a>
-</div>
+把聊天记录导出成微信样式的 HTML，并用本机 Microsoft Edge 打成多页 PDF。左右气泡、时间分隔、语音转写都按聊天页的样子排版。
 
-<blockquote>
-<div style="background-color: #eaf7ea; border-radius: 10px; padding: 20px; position: relative;">
-  <div style="position: relative;">
-    <div style="position: absolute;top: 0;bottom: 0;left: 0;width: 2px;background-color: #000000;"></div>
-    <h2>前言</h2>
-    <div style="text-indent: 2em;">
-        <a align="center" href="https://memotrace.cn/"><img src="./doc/image2.png"/></a>
-        <p style="text-indent:2em;">我深信有意义的不是微信，而是隐藏在对话框背后的一个个<strong>深刻故事</strong>。未来，每个人都能拥有AI的陪伴，而你的数据能够赋予它有关于你过去的珍贵记忆。我希望每个人都有将自己的生活痕迹👨‍👩‍👦👚🥗🏠️🚴🧋⛹️🛌🛀留存的权利，而不是遗忘💀。</p>
-        <p style="text-indent:2em;">AI的发展不仅仅是技术的提升，更是情感💞的延续。每一个对话、每一个互动都是生活中独一无二的片段，是真实而动人的情感交流。因此，我希望AI工作者们能够<strong>善用这些自己的数据</strong>，用于培训独特的、属于个体的人工智能。让<strong>个人AI成为生活中的朋友</strong>，能够理解、记录并分享我们的欢笑、泪水和成长。</p>
-        <p style="text-indent:2em;">那天，AI不再是高不可攀的存在，而是融入寻常百姓家的一部分。因为<strong>每个人能拥有自己的AI</strong>，将科技的力量融入生活的方方面面。这是一场关于真情实感的革命，一场让技术变得更加人性化的探索，让我们共同见证未来的美好。</p>
-        <p align="center"><strong>所以《留痕》</strong></p>
-    </div>
-  </div>
-</div>
-</blockquote>
+仓库里带了一份示例，可以直接打开：
 
+- [output/demo/index.html](output/demo/index.html)
+- [output/demo/chat.pdf](output/demo/chat.pdf)
 
-> 此项目很久没有（也不会）更新了（未来也许会考虑截图+OCR实现，也许一年或许十年）
+## 能导出的消息
 
-我最近在做一个[AI相册项目](https://github.com/LC044/TrailSnap)， 这是一个智能化的 AI 相册应用，致力于帮助用户轻松记录、整理和回顾自己的出行经历。通过强大的 AI 处理能力，让每一张照片和每一段旅程都成为值得珍藏的记忆。
+文本、引用回复、图片、语音、视频、表情、文件、合并转发、系统消息、音乐、链接、名片、位置、分享卡片、视频号、转账、红包、小程序、通话。
 
-我相信未来每个人（至少每个家庭）都有一个属于自己的 AI 数据中心，而相册是数据中心的一个重要数据来源，它留存了你生活中的很多瞬间，而 AI 相册则是将这些瞬间转化为有价值的记忆，它可以帮你默默地记录下相册里的车票、景点门票，可以帮你记录旅行中的所见所闻，可以帮你自动整理出可以发朋友圈的照片（甚至帮你准备好文案），可以帮你剪一段15s的短视频······。
+语音气泡是波形、时长和转写文字，不放音频播放器。没有转写结果时只显示时长。图片在缺少解密密钥时显示为「图片」卡片。
 
-所以，我给这个项目初步命名为 **《行影集》**，在这里你的数据才 **“真正属于你”**。
+## 环境
 
-目前，项目正处于长期迭代开发阶段，诚挚邀请你体验试用，并随时在开源仓库提出宝贵的意见与建议。
+- Python 3.10 及以上
+- Microsoft Edge（生成 PDF 时需要）
 
-开源地址：[https://github.com/LC044/TrailSnap](https://github.com/LC044/TrailSnap)
+只跑示例时，不必安装下面这些库。从已解密的微信 4 数据库导出时再装：
 
-![](./doc/image1.png)
+```bash
+pip install zstandard pycryptodome pysilk faster-whisper
+```
 
-2025年度报告将在这个项目实现
+语音还需要 ffmpeg。转写使用 faster-whisper 的 `small` 模型，语言为中文，结果会缓存在音频旁边的 `.txt` 里。
 
-![年度报告](./doc/年度报告.jpg)
+## 生成示例
 
-## 其他项目
+在仓库根目录执行：
 
-* [EasyBox-一个实用多功能工具箱](https://github.com/LC044/EasyBox)
-  * PDF转Word、PDF合并
-  * 网页转PDF
-  * 根据文件名修改图片的拍摄时间
+```bash
+python -m chat_export --demo
+```
 
-## 2024年度报告
+默认写到 `output/demo/`，里面有 `index.html`、`chat.pdf` 和 `media/`。
 
-### 预览
+## 从 JSON 导出
 
-[个人年度报告在线预览](https://memotrace.cn/2024/single/)
+消息可以是本工具自己的列表，也可以是带 `messages` 字段的对象。
 
-[双人年度报告在线预览](https://memotrace.cn/2024Report/)
+```bash
+python -m chat_export 记录.json -o 输出目录 --title 聊天记录
+```
 
-### 源码地址
+一条消息大致是这样：
 
-[https://github.com/LC044/AnnualReport](https://github.com/LC044/AnnualReport)
+```json
+{
+  "kind": "voice",
+  "is_send": false,
+  "avatar": "media/avatar.png",
+  "duration": 3,
+  "voice_text": "好的，谢谢。"
+}
+```
 
+`kind` 可用 `text`、`image`、`voice`、`video`、`emoji`、`file`、`transfer`、`location`、`link`、`system` 等。图片、头像、文件写相对路径时，会按 JSON 所在目录复制到输出目录的 `media/`。
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LC044/WeChatMsg&type=Date)](https://star-history.com/?utm_source=bestxtools.com#LC044/WeChatMsg&Date)
+也可以在代码里调用：
 
-# License
+```python
+from pathlib import Path
+from chat_export.render import export_chat, load_messages
 
-WeChatMsg is licensed under [MIT](./LICENSE).
+messages = load_messages(Path("记录.json"))
+export_chat(messages, Path("输出目录"), title="聊天记录")
+```
 
-Copyright © 2022-2024 by SiYuan.
+## 从微信 4 本地库导出
+
+这一步读取的是**已经解密**的本地数据库，程序本身不负责取出数据库密钥。解密后的库放在一个目录里，其中要有 `message/message_*.db`；语音在 `message/media_0.db` 的 `VoiceInfo` 表。
+
+先设置环境变量，再调用 `load_conversation`：
+
+| 变量 | 作用 |
+| --- | --- |
+| `WECHAT_WXID` | 自己的 wxid，用来区分左右气泡 |
+| `WECHAT_DB_ROOT` | 已解密数据库的根目录 |
+| `WECHAT_ACCOUNT_DIR` | 微信账号目录，用来找图片、文件和视频 |
+| `WECHAT_IMAGE_KEY` | 图片 AES 密钥文件。没有密钥时图片导出为卡片 |
+| `FFMPEG` | ffmpeg 可执行文件 |
+| `WECHATMSG_EXPORTER` | 未设置 `FFMPEG` 时，从这里的 `exporter/resources/ffmpeg.exe` 查找 |
+
+```python
+import os
+from pathlib import Path
+
+os.environ["WECHAT_WXID"] = "自己的wxid"
+os.environ["WECHAT_DB_ROOT"] = r"已解密数据库目录"
+os.environ["WECHAT_ACCOUNT_DIR"] = r"微信账号目录"
+os.environ["FFMPEG"] = r"ffmpeg.exe 的路径"
+
+from chat_export.from_db import load_conversation
+from chat_export.render import export_chat
+
+media = Path("媒体缓存")
+messages = load_conversation("对方的wxid", media)
+export_chat(messages, Path("输出目录"), title="聊天记录", media_root=media)
+```
+
+`load_conversation` 的第一个参数是对方的 wxid，不是备注名。
+
+## 目录
+
+```text
+chat_export/     导出和排版
+output/demo/     示例 HTML 与 PDF
+```
+
+## 许可
+
+[MIT](LICENSE)
